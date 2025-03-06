@@ -26,6 +26,43 @@ async function run() {
   try {
     // auth related api
 
+    // all collection
+    const usersCollection = client.db("online-Class").collection("users");
+
+    // token genarate
+    app.post("/jwt", async (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCES_TOKEN, {
+        expiresIn: "1hr",
+      });
+      console.log("token", token);
+      res.send({ token });
+    });
+
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const query = { email: user.email };
+      // Check if the user exists
+      const isExist = await usersCollection.findOne(query);
+      if (isExist) {
+        return res.send(isExist);
+      } else {
+        const options = { upsert: true };
+        const updateDoc = {
+          $set: {
+            ...user,
+            timestamp: Date.now(),
+          },
+        };
+        const result = await usersCollection.updateOne(
+          query,
+          updateDoc,
+          options
+        );
+        res.send(result);
+      }
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
