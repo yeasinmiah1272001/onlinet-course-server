@@ -35,13 +35,15 @@ async function run() {
       const token = jwt.sign(user, process.env.ACCES_TOKEN, {
         expiresIn: "1hr",
       });
-      console.log("token", token);
+      //   console.log("token", token);
       res.send({ token });
     });
-
+    // user svaed database and updated user
     app.put("/users", async (req, res) => {
       const user = req.body;
-      const query = { email: user.email };
+      //   console.log(user);
+      const query = { email: user?.email };
+      //   console.log(query);
       // Check if the user exists
       const isExist = await usersCollection.findOne(query);
       if (isExist) {
@@ -61,6 +63,20 @@ async function run() {
         );
         res.send(result);
       }
+    });
+    // get all users
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/user/:email", async (req, res) => {
+      const user = req.body;
+      //   console.log(user);
+      const email = req.params.email;
+      const query = { email };
+      //   console.log(query);
+      const result = await usersCollection.findOne(query);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
