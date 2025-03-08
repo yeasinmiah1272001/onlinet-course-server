@@ -28,6 +28,7 @@ async function run() {
 
     // all collection
     const usersCollection = client.db("online-Class").collection("users");
+    const teacherCollection = client.db("online-Class").collection("teachers");
 
     // token genarate
     app.post("/jwt", async (req, res) => {
@@ -69,6 +70,7 @@ async function run() {
       const result = await usersCollection.find().toArray();
       res.send(result);
     });
+    // admin role chack
     app.get("/user/:email", async (req, res) => {
       const user = req.body;
       //   console.log(user);
@@ -76,6 +78,18 @@ async function run() {
       const query = { email };
       //   console.log(query);
       const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
+
+    // add teacher
+    app.post("/add-teacher", async (req, res) => {
+      const teacher = req.body;
+      console.log(teacher);
+      const result = await teacherCollection.insertOne(teacher);
+      res.send(result);
+    });
+    app.get("/all-teacher", async (req, res) => {
+      const result = await teacherCollection.find().toArray();
       res.send(result);
     });
 
