@@ -110,6 +110,8 @@ async function run() {
           email: teacher.email,
           joiningDate: teacher.joiningDate,
           image: teacher.image,
+          classTime: teacher.classTime,
+          Day: teacher.day,
         },
       };
       const result = await teacherCollection.updateOne(query, updatedDoc);
