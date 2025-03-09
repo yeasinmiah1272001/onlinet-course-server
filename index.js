@@ -27,8 +27,10 @@ async function run() {
     // auth related api
 
     // all collection
-    const usersCollection = client.db("online-Class").collection("users");
-    const teacherCollection = client.db("online-Class").collection("teachers");
+    const usersCollection = client.db("school-managment").collection("users");
+    const teacherCollection = client
+      .db("school-managment")
+      .collection("teachers");
 
     // token genarate
     app.post("/jwt", async (req, res) => {
@@ -84,7 +86,7 @@ async function run() {
     // add teacher
     app.post("/add-teacher", async (req, res) => {
       const teacher = req.body;
-      console.log(teacher);
+      // console.log(teacher);
       const result = await teacherCollection.insertOne(teacher);
       res.send(result);
     });
@@ -105,9 +107,9 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("Hello online  Server..");
+  res.send("Hello scholl-managment  Server..");
 });
 
 app.listen(port, () => {
-  console.log(`online is running on port ${port}`);
+  console.log(`school is running on port ${port}`);
 });
