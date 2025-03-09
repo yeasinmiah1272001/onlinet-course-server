@@ -90,8 +90,36 @@ async function run() {
       const result = await teacherCollection.insertOne(teacher);
       res.send(result);
     });
+    // acces teacher and admin
     app.get("/all-teacher", async (req, res) => {
       const result = await teacherCollection.find().toArray();
+      res.send(result);
+    });
+    // acces admin upded teacher
+    app.patch("/teacher/:id", async (req, res) => {
+      const id = req.params.id;
+      const teacher = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          name: teacher.name,
+          admissionNumber: teacher.admissionNumber,
+          subject: teacher.subject,
+          date: teacher.date,
+          gender: teacher.gender,
+          email: teacher.email,
+          joiningDate: teacher.joiningDate,
+          image: teacher.image,
+        },
+      };
+      const result = await teacherCollection.updateOne(query, updatedDoc);
+      res.send(result);
+    });
+    // delete teacher accces admin
+    app.delete("/teacher/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await teacherCollection.deleteOne(query);
       res.send(result);
     });
 
