@@ -34,6 +34,9 @@ async function run() {
     const ClassshedulesCollection = client
       .db("school-managment")
       .collection("classShedules");
+    const studentCollection = client
+      .db("school-managment")
+      .collection("allStudents");
 
     // token genarate
     app.post("/jwt", async (req, res) => {
@@ -129,6 +132,28 @@ async function run() {
     // get class shedules
     app.get("/class-shudels", async (req, res) => {
       const result = await ClassshedulesCollection.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/all-student", async (req, res) => {
+      const student = req.body;
+      console.log(student);
+      const result = await studentCollection.insertOne(student);
+      res.send(result);
+    });
+    app.get("/all-student", async (req, res) => {
+      const result = await studentCollection.find().toArray();
+      res.send(result);
+    });
+    // update attendence
+    app.patch("/all-student/:id", async (req, res) => {
+      const id = req.params.id;
+      const { attendance } = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: { attendance: attendance },
+      };
+      const result = await studentCollection.updateOne(query, updateDoc);
       res.send(result);
     });
 
