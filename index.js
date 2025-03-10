@@ -31,6 +31,9 @@ async function run() {
     const teacherCollection = client
       .db("school-managment")
       .collection("teachers");
+    const ClassshedulesCollection = client
+      .db("school-managment")
+      .collection("classShedules");
 
     // token genarate
     app.post("/jwt", async (req, res) => {
@@ -110,8 +113,6 @@ async function run() {
           email: teacher.email,
           joiningDate: teacher.joiningDate,
           image: teacher.image,
-          classTime: teacher.classTime,
-          Day: teacher.day,
         },
       };
       const result = await teacherCollection.updateOne(query, updatedDoc);
@@ -122,6 +123,12 @@ async function run() {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await teacherCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // get class shedules
+    app.get("/class-shudels", async (req, res) => {
+      const result = await ClassshedulesCollection.find().toArray();
       res.send(result);
     });
 
