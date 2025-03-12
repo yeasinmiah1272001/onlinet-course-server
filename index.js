@@ -145,6 +145,41 @@ async function run() {
       const result = await studentCollection.find().toArray();
       res.send(result);
     });
+    app.get("/all-student/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await studentCollection.findOne(query);
+      res.send(result);
+    });
+    app.delete("/student/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await studentCollection.deleteOne(query);
+      res.send(result);
+    });
+    // update student
+    app.patch("/student/:id", async (req, res) => {
+      const id = req.params.id;
+      const student = req.body;
+      // console.log("student", student);
+      const query = { _id: new ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          name: student.name,
+          className: student.className,
+          date: student.date,
+          gender: student.gender,
+          rollNumber: student.rollNumber,
+          email: student.email,
+          validity: student.validity,
+          image: student.image,
+        },
+      };
+      const result = await studentCollection.updateOne(query, updatedDoc);
+      // console.log("result", result);
+      res.send(result);
+    });
+
     // update attendence
     app.patch("/all-student/:id", async (req, res) => {
       const id = req.params.id;
