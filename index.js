@@ -180,16 +180,39 @@ async function run() {
       res.send(result);
     });
 
-    // update attendence
-    app.patch("/all-student/:id", async (req, res) => {
-      const id = req.params.id;
-      const { attendance } = req.body;
-      const query = { _id: new ObjectId(id) };
-      const updateDoc = {
-        $set: { attendance: attendance },
-      };
-      const result = await studentCollection.updateOne(query, updateDoc);
-      res.send(result);
+    // assingmetn add by teacher
+    app.patch("/all-student", (req, res) => {
+      const {
+        classSelected,
+        assignmentDetails,
+        assignmentName,
+        submitDate,
+        lastDate,
+      } = req.body;
+      // Update all students in the selected class with the new assignment details
+      studentCollection
+        .updateMany(
+          { className: classSelected }, // Matching students by class
+          {
+            $set: {
+              assignmentDetails,
+              assignmentName,
+              submitDate,
+              lastDate,
+            },
+          }
+        )
+        .then((result) => {
+          res.send({
+            success: true,
+            message: "Assignment updated successfully",
+            result,
+          });
+        })
+        .catch((error) => {
+          console.error("Error updating assignment:", error);
+          res.send({ success: false, message: "Something went wrong", error });
+        });
     });
 
     // Send a ping to confirm a successful connection
