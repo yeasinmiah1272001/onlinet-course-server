@@ -189,6 +189,7 @@ async function run() {
         submitDate,
         lastDate,
       } = req.body;
+      // console.log(req.body);
       // Update all students in the selected class with the new assignment details
       studentCollection
         .updateMany(
@@ -213,6 +214,43 @@ async function run() {
           console.error("Error updating assignment:", error);
           res.send({ success: false, message: "Something went wrong", error });
         });
+    });
+    // student mark add by teacher
+    app.put("/all-student", async (req, res) => {
+      const { classSelecteds, addmark, subjectSelect, name } = req.body;
+      console.log("body", req.body);
+
+      // Check if the required fields are present
+      if (!classSelecteds || !addmark || !subjectSelect || !name) {
+        return res.status(400).send({ message: "Missing required fields" });
+      }
+
+      const query = { className: classSelecteds, name: name }; // Matching class and student name
+      const newSubjectMark = {
+        subject: subjectSelect,
+        mark: parseInt(addmark), // Ensure mark is a number
+      };
+
+      try {
+        // Use the MongoDB native driver to perform the update
+        const result = await studentCollection.updateOne(query, {
+          $push: { subjectMarks: newSubjectMark }, // Add to subjectMarks array
+        });
+
+        console.log("result", result);
+
+        // Check if the update was successful
+        if (result.modifiedCount > 0 || result.upsertedCount > 0) {
+          res.send({ message: "Mark and subject added successfully!" });
+        } else {
+          res.send({
+            message: "No matching student found or no changes made.",
+          });
+        }
+      } catch (error) {
+        console.error("Error updating student:", error);
+        res.status(500).send({ message: "Something went wrong!" });
+      }
     });
 
     // Send a ping to confirm a successful connection
