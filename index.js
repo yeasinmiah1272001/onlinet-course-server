@@ -228,7 +228,7 @@ async function run() {
       const query = { className: classSelecteds, name: name }; // Matching class and student name
       const newSubjectMark = {
         subject: subjectSelect,
-        mark: parseInt(addmark), // Ensure mark is a number
+        mark: parseInt(addmark),
       };
 
       try {
