@@ -37,6 +37,7 @@ async function run() {
     const studentCollection = client
       .db("school-managment")
       .collection("allStudents");
+    const noticeCollection = client.db("school-managment").collection("notice");
 
     // token genarate
     app.post("/jwt", async (req, res) => {
@@ -251,6 +252,37 @@ async function run() {
         console.error("Error updating student:", error);
         res.status(500).send({ message: "Something went wrong!" });
       }
+    });
+
+    // add notice added by admin
+    app.post("/add-notice", async (req, res) => {
+      const notice = req.body;
+      const result = await noticeCollection.insertOne(notice);
+      res.send(result);
+    });
+    app.get("/all-notice", async (req, res) => {
+      const result = await noticeCollection.find().toArray();
+      res.send(result);
+    });
+    app.get("/all-notice/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await noticeCollection.findOne(query);
+      res.send(result);
+    });
+    // attendace
+    app.patch("/all-student/:id", async (req, res) => {
+      const id = req.params.id;
+      const attendance = req.body;
+      console.log("att", attendance);
+      const query = { _id: new ObjectId(id) };
+      const uptadedDoc = {
+        $set: {
+          attendance,
+        },
+      };
+      const result = await studentCollection.updateOne(query, uptadedDoc);
+      res.send(result);
     });
 
     // Send a ping to confirm a successful connection
