@@ -285,6 +285,13 @@ async function run() {
       res.send(result);
     });
 
+    // admin-state
+    app.get("/admin-states", async (req, res) => {
+      const student = await studentCollection.estimatedDocumentCount();
+      const teacher = await teacherCollection.estimatedDocumentCount();
+      res.send({ student, teacher });
+    });
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
